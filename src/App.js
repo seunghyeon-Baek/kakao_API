@@ -1,8 +1,8 @@
 import React from 'react';
-import { useEffect, useLayoutEffect, useState } from 'react';
 import axios from 'axios';
+import { useEffect, useLayoutEffect, useState } from 'react';
 import { Button, Container, Row, Col, Card } from 'react-bootstrap';
-
+import './assets/css/style.css'
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 function App() {
@@ -44,32 +44,32 @@ function App() {
     <div className="App">
       <h1>베스트셀러</h1>
       {
-         loading ?
-         (<div className='loading'>로딩...</div>) :  // loading이 true면 
-         (
+        loading ?
+          (<div className='loading'>로딩...</div>) :  // loading이 true면 
+          (
 
-          <Row className="justify-content-start m-5">
-          {userData.map((item, i) => (
-            <Col key={i} xs={6} md={2}>
-              <div className="card">
-                <img src={item.thumbnail} alt="" className="img-fluid" />
-                <div className="cardTitle">
-                  <a href={item.url} target="_blank" style={{ textDecoration: 'none' }}>
-                    {item.title}
-                  </a>
-                  <p></p>
-                </div>
-              </div>
-            </Col>
-          ))}
-        </Row>
+            <Row className="justify-content-start m-5">
+              {userData.map((item, i) => (
+                <Col key={i} xs={6} md={2}>
+                    <div className="card">
+                      <img src={item.thumbnail} alt="책 이미지" className="img-fluid" id="thumbnail"/>
+                      <div className="cardTitle">
+                        <a href={item.url} target="_blank" className='url'>
+                         {item.title.length > 10 ? `${item.title.substring(0, 11)}...` : item.title}
+                        </a>
+                        <p className='translators'>{item.translators}</p>
+                      </div>
+                    </div>
+                </Col>
+              ))}
+            </Row>
 
 
 
-         )
-     }
-   </div>
- )
+          )
+      }
+    </div>
+  )
 }
 
 export default App;

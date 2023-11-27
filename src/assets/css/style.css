@@ -1,0 +1,22 @@
+.card{
+    border-radius: 10px;
+    margin-bottom: 15px;
+}
+
+#thumbnail {
+    height: 200px;
+    width: 100%;
+}
+
+.url {
+    text-decoration: none;
+    color: #333;
+}
+
+.translators {
+    color: gray;
+}
+
+.cardTitle {
+    background-color: #c0b4b448;
+}
