@@ -1,35 +1,34 @@
+
 import { useEffect, useLayoutEffect, useState } from 'react';
 import axios from 'axios';
 
 function App() {
-  const REST_API_KEY = "7f47b0a8ad4442492da6c0343a4cb9d2"; // rest api 가져오기
-  const currnetPage = 1; // 현재페이지
+  const keyNum = "9a88e2c5-0423-4b86-a7c0-0974d74d4359"; // api 주소에서 가져옴
+  const currnetPage = 3; // 현재페이지
   const listCnt = 10; // 몇개씩
   const [userData, setUserData] = useState([])
   const [loading, setLoading] = useState(true)
-  const searchTitle = '미움받을 용기';
 
   // 함수이름지정 // request URL 가져오기 // async ?
   const callApi = async (currnetPage) => {
     try {
       setLoading(true)
-      const response = await axios.get(`https://dapi.kakao.com/v3/search/book?target=title`,{
-        params:{
-          query: searchTitle,
-          // sort : 'latest '// 최근발간순서대로
-        },
-        headers:{
-          Authorization:`KakaoAK ${REST_API_KEY}`
-        }
-      })
-      console.log(response.data);
-      setUserData(response.data.documents)
+      const response = await axios.get(`http://api.kcisa.kr/openapi/API_CNV_060/request?serviceKey=${keyNum}&numOfRows=${listCnt}&pageNo=${currnetPage}`)
+      setUserData(response.data.response.body.items.item)
     } catch (error) {
       console.error("error title : " + error);
     } finally {
       setLoading(false)
     }
 
+    // axios.get(`http://api.kcisa.kr/openapi/API_CNV_060/request?serviceKey=${keyNum}&num
+    // .then((response)=>{
+    //   console.log(response.data.response.body.items.item)
+    //   setUserData(response.data.response.body.items.item)
+    // })
+    // .catch((error)=>{
+    //   console.log(error);
+    // })
   }
 
   useEffect(() => {
@@ -38,7 +37,7 @@ function App() {
 
   return (
     <div className="App">
-      <h1>다음 책 검색 Api</h1>
+      <h1>문화체육관광부 추천여행 Api</h1>
       {
         loading ?
           (<div className='loading'>로딩...</div>) :  // loading이 true면 
@@ -51,8 +50,7 @@ function App() {
                       <div className="card">
                         <div className="cardTitle"><a href={item.url} target="_blank">{item.title}
                         </a>
-                        {/* <div className="cardText" dangerouslySetInnerHTML={{ __html: item.description }} /> */}
-                        <img src={item.thumbnail} alt="" />
+                        <div className="cardText" dangerouslySetInnerHTML={{ __html: item.description }} />
                         </div>
                         </div>
                     </li>
