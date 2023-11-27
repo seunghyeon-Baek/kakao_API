@@ -42,27 +42,34 @@ function App() {
 
   return (
     <div className="App">
-      <h1>베스트셀러</h1>
+      <h1>다음 책 검색 Api</h1>
       {
          loading ?
          (<div className='loading'>로딩...</div>) :  // loading이 true면 
          (
 
-          <Row className="justify-content-start m-5">
-          {userData.map((item, i) => (
-            <Col key={i} xs={6} md={2}>
-              <div className="card">
-                <img src={item.thumbnail} alt="" className="img-fluid" />
-                <div className="cardTitle">
-                  <a href={item.url} target="_blank" style={{ textDecoration: 'none' }}>
-                    {item.title}
-                  </a>
-                  <p></p>
-                </div>
-              </div>
-            </Col>
-          ))}
-        </Row>
+           <Row className='justify-content-center'>
+             <Col xs={6} md={2} >
+               <ul>
+                 {
+                   userData.map((item, i) => {
+                     return (
+                       <li key={i}>
+                         <div className="card">
+                           <div className="cardTitle"><a href={item.url} target="_blank">
+                             {item.title}
+                           </a>
+                             {/* <div className="cardText" dangerouslySetInnerHTML={{ __html: item.description }} /> */}
+                             <img src={item.thumbnail} alt="" />
+                           </div>
+                         </div>
+                       </li>
+                     )
+                   })
+                 }
+               </ul>
+             </Col>
+           </Row>
 
 
 
