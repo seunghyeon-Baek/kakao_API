@@ -1,122 +1,126 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import './App.css';
+import "./App.css"
 
 function App() {
-  const REST_API_KEY = "313aa436f38f2ff1221ba8c5a9f643d7";
-  const size = 10;
-  // const currentPage = 1;
-  const [currentPage, setCurrentPage] = useState(1)
-  const [useData,setUseData] = useState([])
-  const [totalpages, setTotalpages] = useState(0)
+  const REST_API_KEY = "7f47b0a8ad4442492da6c0343a4cb9d2";
+  const currentPage = 1;
+  const listCnt = 20;
+  const [userData, setUserData] = useState([])
   const [loading, setLoading] = useState(true)
-  const [searchTitle, setSearchTitle] = useState('')
-  // const searchTitle = '이효리';
+  const [searchTitle, setSearchTitle] = useState('사자')
+  const [modalView, setModalView] = useState(false)
+  const [modalViewNum, setModalViewNum] = useState(0)
 
-  const callApi = async (currentPage) => {
+  const callApi = async (searchTitle) => {
     try {
       setLoading(true)
-
-      const response = await axios.get(`https://dapi.kakao.com/v2/search/web`, {
-        params:{
+      const response = await axios.get(`https://dapi.kakao.com/v2/search/image`, {
+        params: {
           query: searchTitle,
+          // sort:'recency'
+          size: listCnt,
           page: currentPage
         },
-        headers:{
+        headers: {
           Authorization: `KakaoAK ${REST_API_KEY}`
-        }
+        },
       })
       console.log(response.data);
-      setUseData(response.data.documents)
-      setTotalpages(response.data.meta.total_count / size)
+      setUserData(response.data.documents)
     } catch (error) {
-      console.error("error title : " +error);
+      console.error("error title : " + error);
     } finally {
       setLoading(false)
     }
-  
   }
-  
-  // useEffect(()=>{
-  //   callApi(currentPage)
-  // },[currentPage])
 
-  useEffect(()=>{
+  useEffect(() => {
     callApi(searchTitle)
-  },[])
+  }, [])
+
 
   const searchBtn = () => {
     callApi(searchTitle)
   }
 
-  const handlerKeyPress = (e)=>{
-    if(e.key == "Enter") {
+  const handlerKeyPress = (e) => {
+    if (e.key == "Enter") {
       callApi(searchTitle)
     }
   }
 
-  const pageViewNumbers = ()=>{
-    const pageNums = [];
-    const startPage = Math.floor((currentPage - 1) / size) * size + 1 ;
-    const endPage = startPage + size - 1;
-
-    for(let i = startPage; i<=endPage; i++) {
-      pageNums.push(
-        <span className={`page-item ${currentPage === i ? 'active' : ''}`} key={i} onClick={()=>{handlePageChange(i)}}>
-          <a className="page-link" href="#">{i}</a>
-        </span>
-      )
-    }
-
-    return pageNums;
+  const handleModal = (num) => {
+    setModalView(true)
+    setModalViewNum(num)
   }
-  const handlePageChange = (newPage) => {
-    if (newPage >= 1 && newPage <= totalpages) {
-      setCurrentPage(newPage)
-    }
+
+  const modalClose = (num) => {
+    setModalView(false)
+    setModalViewNum(num)
   }
+
 
   return (
     <div className="App">
-        <h1>다음 web 검색</h1>
-        <div className="container mb-3">
-          <div className="row">
-            <div className="col d-flex gap-1">
-              <input type="text" className='form-control' 
-              onChange={(e)=>{setSearchTitle(e.target.value)}}
-              onKeyPress={handlerKeyPress}/>
-              <button className='btn btn-primary' style={{width:'100px'}} onClick={searchBtn}>검색</button>
-            </div>
-          </div>
-        </div>
-        <ul>
-          {
-            useData.map(function(item,i) {
-              return (
-                <li key={i} className='mb-3'>
-                  <div className="title" dangerouslySetInnerHTML={{__html:item.title}}></div>
-                  <div className="content" dangerouslySetInnerHTML={{__html:item.contents}}></div>
-                  <hr />
-                </li>
-              )
-            })
-          }
-        </ul>
+      <div className="container">
+        <h1>다음 검색 api</h1>
+      </div>
 
-        <div>
-          <ul className="pagination">
-            <li className="page-item" onClick={()=>{handlePageChange(currentPage-1)}}>
-              <a className="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
-            </li>
-            {pageViewNumbers()}
-            <li className="page-item" onClick={()=>{handlePageChange(currentPage+1)}}>
-              <a className="page-link" href="#">Next</a>
-            </li>
-          </ul>
-        </div>
+      {
+        loading ?
+          (<div className='loading'>로딩...</div>) :
+          (
+            <div className='container'>
+              <div className="row mb-3">
+
+                <div className="col d-flex gap-1">
+                  <input type="text" className="form-control"
+                    onChange={(e) => { setSearchTitle(e.target.value) }} onKeyPress={handlerKeyPress} />
+                  <button className='btn btn-primary' style={{ width: '100px' }} onClick={searchBtn} >검색</button>
+                </div>
+
+              </div>
+              <div className='px-0 row'>
+                {
+                  userData.map((item, i) => {
+                    return (
+
+                      <div className='col-3' key={i}>
+                        <img src={item.thumbnail_url} alt="" className='w-100 rounded m-3' onClick={() => { handleModal(i) }} />
+                      </div>
+
+
+                    )
+                  })
+                }
+              </div>
+            </div>
+          )
+      }
+
+      {
+        modalView == true ?
+          <ModalView viewData={userData} modalNum={modalViewNum} modalClose={modalClose} /> : null
+      }
+
     </div>
   );
+}
+
+function ModalView({ viewData, modalNum, modalClose }) {
+  return (
+    <div className="modalView">
+      <h3>이미지보기</h3>
+
+      <img src={viewData[modalNum].image_url} alt="" width="200px" />
+      <div className='d-flex justify-content-end'>
+        <button className='btn btn-primary' onClick={modalClose}>닫기</button>
+
+      </div>
+    </div>
+  )
 }
 
 export default App;

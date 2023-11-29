@@ -45,3 +45,19 @@ ul, li{list-style: none;}
     transform: rotate(360deg);
   }
 }
+
+
+/* 1129 */
+.modalView{
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1;
+  width: 300px;
+  height: 300px;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 0 10 rgba(0,0,0,0.5);
+  padding: 10px;
+}
